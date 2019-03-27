@@ -12,14 +12,11 @@ $firstName = htmlspecialchars($_POST['firstName']);
     </head>
     <body>
         <?php
-        /* isset on verifie si ça existe  */
-        if (isset($lastName)) {
-            /* empty on verifie si l'imput est vide */ 
-            if (empty($lastName)) {
-                ?>
-                <p>Nom : champ oligatoire</p>
-                <?php
-            } else {
+        /* isset on verifie que le formulaire à bien été validé en cliquant sur le boutton envoyé qui contient le name sumbit  */
+        if (isset($_POST['submit'])) {
+            /* empty on verifie si l'imput est vide et si il existe */
+            if (!empty($lastName)) {
+
                 /* Si il est rempli alors on verifie la pattern  avec preg_match */
                 if (preg_match($pattern, $lastName)) {
                     ?>
@@ -28,23 +25,30 @@ $firstName = htmlspecialchars($_POST['firstName']);
                     <p>Merci d'entrer un Nom correct <p>
                         <?php
                     }
-                }
-            }
-            if (isset($firstName)) {
-                if (empty($firstName)) {
+                } else {
                     ?>
-                <p>Prénom : champ oligatoire</p>
-                <?php
-            } else {
+                <p>Nom : champ obligatoire</p>
+            <?php
+            }
+
+             /* empty on verifie si l'imput est vide et si il existe */
+            if (!empty($firstName)) {
+
+                /* Si il est rempli alors on verifie la pattern  avec preg_match */
                 if (preg_match($pattern, $firstName)) {
                     ?>
-                    <p>Prénom : <?= $firstName ?></p>
+                    <p>Prénom : <?= $firstName ?> </p>
                 <?php } else { ?>
-                    <p>Merci d'entrer un Prénom correct<p>
+                    <p>Merci d'entrer un Prénom correct <p>
                         <?php
                     }
-                }
+                } else {
+                    ?>
+                <p>Prénom : champ obligatoire</p>
+            <?php
+            }
             }
             ?>
+                <a href="index.php">Retour au formulaire</a>
     </body>
 </html>

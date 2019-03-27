@@ -6,9 +6,10 @@
     </head>
     <body>
         <p>Créer un formulaire demandant le nom et le prénom. Ce formulaire doit rediriger vers la page user.php avec la méthode GET.</p>
-        <form action="user.php" method="get">
-            <label for="lastName"> Votre nom : </label><input type="text" name="lastName" />
-            <label for="firstName"> Votre prénom : </label><input type="text" name="firstName" />
+        <!-- action et method sont des attributs -->
+        <form action="user.php" method="GET">
+            <label for="lastName"> Votre nom : </label><input type="text" name="lastName" required/>
+            <label for="firstName"> Votre prénom : </label><input type="text" name="firstName" required/>
             <input type="submit" value="Envoyer" name="submit" />
         </form>
     </body>

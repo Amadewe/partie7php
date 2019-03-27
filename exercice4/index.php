@@ -9,7 +9,7 @@
         <form action="user.php" method="POST">
             <label for="lastName"> Votre nom : </label><input type="text" name="lastName"/>
             <label for="firstName"> Votre prénom : </label><input type="text" name="firstName"/>
-            <input type="submit" value="Envoyer" />
+            <input type="submit" value="Envoyer" name="submit"/>
         </form>
     </body>
 </html>

@@ -49,5 +49,6 @@ $firstName = htmlspecialchars($_GET['firstName']);
             }
             }
             ?>
-    </body>
+                <a href="index.php">Retour au formulaire</a>
+    </body> 
 </html>
