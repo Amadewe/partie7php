@@ -7,9 +7,9 @@
     <body>
         <p>Avec le formulaire de l'exercice 1, afficher dans la page user.php les données du formulaire transmis.</p>
         <form action="user.php" method="GET">
-            <label for="lastName"> Votre nom : </label><input type="text" name="lastName" />
-            <label for="firstName"> Votre prénom : </label><input type="text" name="firstName" />
-            <input type="submit" value="Envoyer" name="submit" />
+            <label for="lastname"> Votre nom : </label><input type="text" name="lastname" />
+            <label for="firstname"> Votre prénom : </label><input type="text" name="firstname" />
+            <input type="submit" value="Envoyer" />
         </form>
     </body>
 </html>
