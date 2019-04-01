@@ -3,9 +3,6 @@ $genderListing = array(1 => 'Mr', 2 => 'Mme', 3 => 'Autres');
 $patternName = '/^([A-Z]{1}[a-zÀ-ÖØ-öø-ÿ]+)([- ]{1}[A-Z]{1}[a-zÀ-ÖØ-öø-ÿ]+){0,1}$/m';
 
 
-       
-
-
             /* empty on verifie si l'imput est vide et si il existe */
             if (!empty($lastName)) {
                 /* Si il est rempli alors on verifie la patternName  avec preg_match */

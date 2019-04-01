@@ -1,81 +1,126 @@
 <?php
-$genderListing = array(1 => 'Mr', 2 => 'Mme', 3 => 'Autres');
-$patternName = '/^([A-Z]{1}[a-zÀ-ÖØ-öø-ÿ]+)([- ]{1}[A-Z]{1}[a-zÀ-ÖØ-öø-ÿ]+){0,1}$/m';
-/* on crée une variable $lastName pour ne pas rappeller $_POST['lastName'] */
+// je stocke dans la variable '$patternName' ma regex pour les noms !
+$patternName = '%^([A-Z]{1}[a-zÀ-ÖØ-öø-ÿ]+)([- ]{1}[A-Z]{1}[a-zÀ-ÖØ-öø-ÿ]+){0,1}$%';
+// je créé un tableau qui va contenir mes erreurs.
+$formErrors = array();
+
+// On vérifie le nombre de lignes dans le tableau POST qui contient toutes les données saisies dans le formulaire. 
+if (count($_POST) > 0) {
+  // on vérifie que la variable $_POST['lastName'] existe ET n'est pas vide.
+  if (!empty($_POST['lastName'])) {
+    // Je vérifie bien que ma variable $_POST['lastName'] correspond à ma patternName.
+    if (preg_match($patternName, $_POST['lastName'])) {
+      // On stocke dans la variable lastName la variable $_POST['lastName'] dont on a désactivé les balises HTML.
+      $lastName = htmlspecialchars($_POST['lastName']);
+    } else {
+      // Si la saisie utilisateur ne correspond pas à la regex on va stocker une erreur lastName dans notre tableau d'erreurs.
+      $formErrors['lastName'] = 'Vôtre nom de famille est incorrect';
+    }
+  } else {
+    // On va réutiliser notre erreur lastName parce que les deux ne peuvent pas exister en même temps.
+    $formErrors['lastName'] = 'Veuillez renseigner votre nom de famille';
+  }
+
+  if (!empty($_POST['firstName'])) {
+    if (preg_match($patternName, $_POST['firstName'])) {
+      $firstName = htmlspecialchars($_POST['firstName']);
+    } else {
+      $formErrors['firstName'] = 'Vôtre prénom est incorrect';
+    }
+  } else {
+    $formErrors['firstName'] = 'Veuillez renseigner votre prénom';
+  }
+
+  if (!empty($_POST['title'])) {
+    if ($_POST['title'] === 'Monsieur' || $_POST['title'] === 'Madame') {
+      $title = $_POST['title'];
+    } else {
+      $formErrors['title'] = 'Vôtre civilité est incorrecte';
+    }
+  } else {
+    $formErrors['title'] = 'Veuillez renseigner votre civilité';
+  }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
-    <head>
-        <meta charset="utf-8" />
-        <title>Exercice 6 partie 7 php</title>
-    </head>
-    <body>
-        <p>Avec le formulaire de l'exercice 5, Si des données sont passées en POST ou en GET, le formulaire ne doit pas être affiché. </p>
-        <p>Par contre les données transmises doivent l'être. Dans le cas contraire, c'est l'inverse.</p>
-        <p>Utiliser qu'une seule page.</p>
-
-
-        <?php if (empty($_POST['LastName']) && empty($_POST['firstName'])) { ?>
-        
-            <form action="index.php" method="POST">
-                <select name="choiceGender">
-                    <!-- choix déroulant pour le genre -->
-                    <?php foreach ($genderListing as $key => $gender) { ?>
-                        <option value="<?= $key ?>"> <?= $gender ?></option>;
-                    <?php } ?>
-                </select>
-                <label for="lastName"> Votre nom : </label><input type="text" name="lastName"/>
-                <label for="firstName"> Votre prénom : </label><input type="text" name="firstName"/>
-                <input type="submit" value="Envoyer" name="submit"/>
-            </form>
-    
-        
-        <?php } else {
-            
-            
-            /* isset on verifie si ça existe  */
-            if (isset($_POST['choiceGender'])) {
-                $choiceGender = htmlspecialchars($_POST['choiceGender']);
-                ?>
-                <p>Genre : <?= $genderListing[$choiceGender] ?></p>
-                <?php
-            }
-            
-            /* isset on verifie que le formulaire à bien été validé en cliquant sur le boutton envoyé qui contient le name sumbit  */
-            if (isset($_POST['submit'])) {
-                 /* empty on verifie si l'imput est vide et si il existe */
-            if (!empty($lastName)) {
-                /* Si il est rempli alors on verifie la patternName  avec preg_match */
-                if (preg_match($patternName, $lastName)) {
-                    $lastName = htmlspecialchars($_POST['lastName']);
-                } else {
-                    $errorLastname = 'Veuillez indiquer un nom de famille de la forme "Dupont" ';
-                }
-            } else {
-
-                $errorLastname = 'Nom : Champ obligatoire';
-            } 
-        
-      
-
-            /* empty on verifie si l'imput est vide et si il existe */
-            if (!empty($firstName)) {
-                /* Si il est rempli alors on verifie la patternName  avec preg_match */
-                if (preg_match($patternName, $firstName)) {
-
-                    $firstName = htmlspecialchars($_POST['firstName']);
-                } else {
-                    $errorFirstname = 'Veuillez indiquer un prénom de la forme "Henri" ';
-                }
-            } else {
-
-                $errorFirstname = 'Prénom : Champ obligatoire';
-            }
-            }
-        }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Exercice 6 part 7 PHP</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/journal/bootstrap.min.css" />
+  </head>
+  <body>
+    <div class="container">
+      <?php
+      // On affiche le formulaire si rien a été envoyé ou qu'il y a une erreur dans ce qui à été saisi.
+      if (count($_POST) == 0 || count($formErrors) > 0) {
         ?>
-                
-                
-      
-    </body>
+        <form method="POST" action="index.php">
+          <div class="form-group">
+            <label for="lastName">Nom de famille</label>
+            <?php
+            /* On donne en valeur à notre input ce qui a été saisi par notre utilisateur . ça permet à l'utilisateur de ne pas ressaisir ses données en cas d'erreur 
+             * isset($_POST['lastName']) ? $_POST['lastName'] : ''
+             * Si $_POST['lastName'] existe (?) alors on affiche $_POST['lastName'] (:) Sinon on affiche rien.            
+             */  
+            ?>
+            <input type="text" value="<?= isset($_POST['lastName']) ? $_POST['lastName'] : '' ?>" name="lastName" class="form-control" id="lastName" placeholder="Dupont" required />
+            <?php
+            // On affiche un alerte rouge qui contient le texte de l'erreur s'il y en à une.
+            if (isset($formErrors['lastName'])) {
+              ?>
+              <div class="alert-danger">
+                <p><?= $formErrors['lastName'] ?></p>
+              </div>
+            <?php } ?>
+          </div>
+          <div class="form-group">
+            <label for="firstName">Prénom</label>
+            <input type="text" value="<?= isset($_POST['firstName']) ? $_POST['firstName'] : '' ?>" name="firstName" class="form-control" id="firstName" placeholder="Jean" required />
+            <?php if (isset($formErrors['firstName'])) { ?>
+              <div class="alert-danger">
+                <p><?= $formErrors['firstName'] ?></p>
+              </div>
+            <?php } ?>
+          </div>
+          <div class="form-group">
+            <label for="title">Civilité</label>
+            <select name="title" class="form-control" id="title" required>
+              <option disabled selected>Veuillez faire un choix !</option>            
+              <option value="Monsieur" <?= isset($_POST['title']) && $_POST['title'] == 'Monsieur' ? 'selected' : '' ?>>Monsieur</option>
+              <option value="Madame" <?= isset($_POST['title']) && $_POST['title'] == 'Madame' ? 'selected' : '' ?>>Madame</option>
+            </select>
+            <?php if (isset($formErrors['title'])) { ?>
+              <div class="alert-danger">
+                <p><?= $formErrors['title'] ?></p>
+              </div>
+            <?php } ?>
+          </div>
+          <input type="submit" name="submit" value="Envoyer" class="btn btn-primary" />
+        </form>
+        <?php
+        /* Pour l'affichage des données si tout a été validé
+         * On affiche une alerte verte pour prévenir que l'utilisateur que tout s'est bien passé:
+         * On affiche les variables lastname , firstname et title car elle contiennent la saisie de l'utilisateur si tout s'est bien passée
+         * On utilise la balises br uniquement dans un p
+         * On a ajouté un bouton de retour au formulaire pour simplifier la navigation. 
+         */
+      } else {
+        ?> 
+        <div class="alert-success">
+          <p>Vos données ont bien été envoyées</p>
+        </div>
+        <div class="well jumbotron">
+          <p>
+            Nom : <?= $lastName ?> <br/>
+            Prénom : <?= $firstName ?> <br/>
+            Civilité : <?= $title ?>
+          </p>
+          <a href="index.php" title="Retour vers le formulaire" class="btn btn-info">Ajouter un nouvel utilisateur</a>
+        </div>
+      <?php } ?>
+    </div>
+  </body>
 </html>
